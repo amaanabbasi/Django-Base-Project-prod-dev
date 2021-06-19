@@ -1,28 +1,46 @@
-# Gimmko
+# Django Base Project separating development and production workflow.
 
-- [x] Users: Candidate, Recruiter, Superuser
-- [x] Superuser can add a recruiter
-- [x] Signup and login for Recruiter
-- [x] Candidate Profile view
-- [x] Email verification (Need Simple email service to create the backend)
-- [x] Document singnature, email notification (Need Simple email service to create the backend)
+# Directory structure
+
+Delete settings.py & wsgi.py, these will have two different files for development and production.
+
+- settings 
+    |- base.py  // few things will be common for both development and production
+    |- dev.py
+    |- prod.py
+
+- wsgi
+   |- dev.py
+   |- prod.py
+  
+
+to run development
+
+`python manage-dev.py runserver`
 
 
-## Frontend Dev
+to run in production mode this will be different, as on a server the application should keep running in the background. Below I have given a example code for deploying it on apache2 server.
 
-Dashboard, accounts, home, these are three apps each of them contains their own templates folder and a static folder.
-The mysite directory also has a templates and static folder which is a global to all the the other apps mentioned before.
+```
 
-## Setup and Installation
-
-### Pre-requisites
-- Python3
-- clone the project
-
-Mac/Linux users
-- cd Gimmko
-- python3 -m venv venv
-- source venv/bin/activate
-- pip install -r requirements.txt
-- python manage-dev.py runserver 8000
-- http://localhost:8000
+<VirtualHost *:80>
+ServerAdmin email@gmail.com
+DocumentRoot /home/ubuntu/mysite/
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+Alias /static /home/ubuntu/mysite/mysite/static_cdn
+<Directory /home/ubuntu/mysite/mysite/static_cdn>
+Require all granted
+</Directory>
+<Directory /home/ubuntu/mysite/mysite/wsgi>
+<Files prod.py>
+Require all granted
+</Files>
+</Directory>
+WSGIDaemonProcess mysite python-path=/home/ubuntu/mysite python-home=/home/ubuntu/venv 
+WSGIProcessGroup mysite
+WSGIScriptAlias / /home/ubuntu/mysite/mysite/wsgi/prod.py
+WSGIPassAuthorization On
+</VirtualHost>
+ 
+```
