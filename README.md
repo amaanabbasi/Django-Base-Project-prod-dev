@@ -4,15 +4,13 @@
 
 Delete settings.py & wsgi.py, these will have two different files for development and production.
 
- *settings*
- ```
+```
+ settings
     |- base.py  // few things will be common for both development and production
     |- dev.py
     |- prod.py
-```
-*wsgi*
 
-```
+ wsgi
    |- dev.py
    |- prod.py
 ```  
